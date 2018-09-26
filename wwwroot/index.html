@@ -1,0 +1,20 @@
+﻿<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular-cookies.min.js" type="text/javascript"></script>
+        <script src="./app.js" type="text/javascript"></script>
+    </head>
+    <body ng-app="app">
+        <div ng-controller="mainController as vm">
+            <div ng-if="vm.loading">
+                Loading...
+            </div>
+
+            <div ng-if="!vm.isAuthorize && !vm.loading">
+                Login: <input type="text" name="login" ng-model="vm.login"/>
+                Password: <input type="text" name="password" ng-model="vm.password"/>
+                <input type="button" value="Ok" ng-click="vm.authorize()"/>
+            </div>
+        </div>
+    </body>
+</html>
