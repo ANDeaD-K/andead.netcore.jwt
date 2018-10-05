@@ -104,6 +104,15 @@ public class IdentityController : Controller
     /// Refresh JWT token
     /// </summary>
     /// <param name="data">JSON object with Refresh token</param>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     POST /refresh
+    ///     {
+    ///        "refresh_token": "965044bd7f4a4972919516eaa76725d4"
+    ///     }
+    /// 
+    /// </remarks>
     /// <returns>HTTP Response</returns>
     /// <response code="200">Returns JSON object with Access token and Refresh token</response>
     /// <response code="401">Invalid Refresh token</response>
