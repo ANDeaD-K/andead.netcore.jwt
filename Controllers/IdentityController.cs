@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 [ApiVersion("1.0", Deprecated = true)]
 [ApiVersion("1.1")]
@@ -56,7 +57,7 @@ public class IdentityController : Controller
     /// <summary>
     /// Return GUID token without dash
     /// </summary>
-    /// <returns>Token</returns>
+    /// <returns>New Refresh token</returns>
     private string GetNewRefreshToken()
     {
         return Guid.NewGuid().ToString().Replace("-", "");
@@ -102,16 +103,20 @@ public class IdentityController : Controller
     /// <summary>
     /// Refresh JWT token
     /// </summary>
-    /// <param name="refreshToken">Refresh token</param>
+    /// <param name="data">JSON object with Refresh token</param>
     /// <returns>HTTP Response</returns>
-    [HttpGet("refresh")]
+    /// <response code="200">Returns JSON object with Access token and Refresh token</response>
+    /// <response code="401">Invalid Refresh token</response>
+    [HttpPost("refresh")]
     [MapToApiVersion("1.1")]
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]
-    public IActionResult Refresh(string refreshToken)
+    public IActionResult Refresh([FromBody] JObject data)
     {
         try
         {
+            string refreshToken = data.GetValue("refresh_token").ToString();
+
             if (!String.IsNullOrEmpty(refreshToken))
             {
                 Person person = people.GetPeople().FirstOrDefault(u => u.RefreshToken == refreshToken);

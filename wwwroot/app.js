@@ -71,17 +71,17 @@
         }
 
         function refreshToken(token) {
-            var get = {
-                method: "GET",
+            var post = {
+                method: "POST",
                 headers: {
                     'Accept': "application/json;",
                 },
-                params: { 'refreshToken': token }
+                // params: { 'refreshToken': token }
             };
 
             var deferred = $q.defer();
 
-            $http.get('/api/identity/v1.1/refresh', get)
+            $http.post('/api/identity/v1.1/refresh', { 'refresh_token': token }, post)
 				.then(function (data) {
                     $log.log(data.data);
 

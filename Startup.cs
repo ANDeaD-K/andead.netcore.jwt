@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +26,7 @@ namespace andead.netcore.jwt
         public const string ISSUER = "MyAuthServer"; // издатель токена
         public const string AUDIENCE = "http://localhost:51884/";
         const string KEY = "mysupersecret_secretkey!123";
-        public const int LIFETIME = 10; // время жизни токена - 1 минута
+        public const int LIFETIME = 1; // время жизни токена - 1 минута
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {
             return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(KEY));
@@ -48,16 +50,19 @@ namespace andead.netcore.jwt
             people.AddRange(new Person[]
                 {
                     new Person() {
+                        Id = 1,
                         UserName = "first",
                         Password = "123qweQWE",
                         Role = "User"
                     },
                     new Person() {
+                        Id = 2,
                         UserName = "tester",
                         Password = "12345678",
                         Role = "User"
                     },
                     new Person() {
+                        Id = 3,
                         UserName = "admin",
                         Password = "qwerty",
                         Role = "Admin"
@@ -161,6 +166,10 @@ namespace andead.netcore.jwt
                         } 
                     );
                 }
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
             });
         }
     }
