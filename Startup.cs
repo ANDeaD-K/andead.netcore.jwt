@@ -11,9 +11,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace andead.netcore.jwt
 {
@@ -22,7 +24,7 @@ namespace andead.netcore.jwt
         public const string ISSUER = "MyAuthServer"; // издатель токена
         public const string AUDIENCE = "http://localhost:51884/";
         const string KEY = "mysupersecret_secretkey!123";
-        public const int LIFETIME = 1; // время жизни токена - 1 минута
+        public const int LIFETIME = 10; // время жизни токена - 1 минута
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {
             return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(KEY));
@@ -83,13 +85,23 @@ namespace andead.netcore.jwt
 
         public IConfiguration Configuration { get; }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
             app.UseAuthentication();
             app.UseMvcWithDefaultRoute();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                }
+            });
+
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -121,7 +133,35 @@ namespace andead.netcore.jwt
                 });
 
             services.AddMvc();
+
+            services.AddMvcCore().AddVersionedApiExplorer();
+            services.AddApiVersioning();
+            
             services.AddSingleton<IPeople>(new People());
-        }        
+
+            services.AddSwaggerGen(options =>
+            {
+                var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
+
+                foreach (var version in provider.ApiVersionDescriptions)
+                {
+                    string description = "";
+                    if (version.IsDeprecated)
+                    {
+                        description += "This API deprecated";
+                    }
+
+                    options.SwaggerDoc(
+                        version.GroupName,
+                        new Info()
+                        {
+                            Title = $"Identity Service API",
+                            Version = version.ApiVersion.ToString(),
+                            Description = description
+                        } 
+                    );
+                }
+            });
+        }
     }
 }

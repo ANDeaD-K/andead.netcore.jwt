@@ -14,17 +14,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
-[Route("/")]
-public class HomeController : Controller
+[ApiVersion("1.0", Deprecated = true)]
+[ApiVersion("1.1")]
+[Route("api/[controller]/v{version:apiVersion}")]
+public class IdentityController : Controller
 {
     private IPeople people;
 
-    public HomeController(IPeople people)
+    public IdentityController(IPeople people)
     {
         this.people = people;
     }
 
     [HttpGet("token")]
+    [MapToApiVersion("1.1")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
     public IActionResult GetToken(string login, string password)
     {
         try
@@ -32,7 +37,6 @@ public class HomeController : Controller
             Person person = people.GetPeople().FirstOrDefault(u => u.UserName == login && u.Password == password);
             if (person != null)
             {
-
                 return Ok(JsonConvert.SerializeObject(
                     new
                     {
@@ -49,6 +53,10 @@ public class HomeController : Controller
         }
     }
 
+    /// <summary>
+    /// Return GUID token without dash
+    /// </summary>
+    /// <returns>Token</returns>
     private string GetNewRefreshToken()
     {
         return Guid.NewGuid().ToString().Replace("-", "");
@@ -60,12 +68,8 @@ public class HomeController : Controller
 
         var claims = new List<Claim>()
         {
-            //new Claim(JwtRegisteredClaimNames.Sub, "test@mail.ru"),
-            //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimsIdentity.DefaultNameClaimType, person.UserName),
             new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
-            //new Claim(ClaimTypes.NameIdentifier, "tester"),
-            //new Claim(ClaimTypes.Role, "admin")
         };
 
         var token = new JwtSecurityToken(
@@ -80,12 +84,30 @@ public class HomeController : Controller
     }
 
     [Authorize, HttpGet("secure")]
+    [MapToApiVersion("1.1")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
     public IActionResult Secret()
     {
         return Ok($"Your name is: {User.Identity.Name}");
     }
 
+    [HttpGet("test")]
+    [MapToApiVersion("1.0")]
+    public IActionResult Test()
+    {
+        return Ok($"This is test message");
+    }
+
+    /// <summary>
+    /// Refresh JWT token
+    /// </summary>
+    /// <param name="refreshToken">Refresh token</param>
+    /// <returns>HTTP Response</returns>
     [HttpGet("refresh")]
+    [MapToApiVersion("1.1")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
     public IActionResult Refresh(string refreshToken)
     {
         try

@@ -17,6 +17,7 @@
         vm.loading = true;
         vm.login = '';
         vm.password = '';
+        vm.authText = '';
 
         vm.authorize = authorize;
 
@@ -49,10 +50,11 @@
 
             var deferred = $q.defer();
 
-            $http.get('/secure', get)
+            $http.get('/api/identity/v1.1/secure', get)
 				.then(function (data) {
                     $log.log(data.data);
 
+                    vm.authText = data.data;
                     vm.isAuthorize = true;
 				})
 				.catch(function (error) {
@@ -79,7 +81,7 @@
 
             var deferred = $q.defer();
 
-            $http.get('/refresh', get)
+            $http.get('/api/identity/v1.1/refresh', get)
 				.then(function (data) {
                     $log.log(data.data);
 
@@ -113,7 +115,7 @@
 
             var deferred = $q.defer();
 
-            $http.get('/token', get)
+            $http.get('/api/identity/v1.1/token', get)
 				.then(function (data) {
                     //deferred.resolve(data.data);
                     $log.log(data);

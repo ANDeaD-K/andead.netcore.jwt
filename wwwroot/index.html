@@ -15,6 +15,10 @@
                 Password: <input type="text" name="password" ng-model="vm.password"/>
                 <input type="button" value="Ok" ng-click="vm.authorize()"/>
             </div>
+
+            <div ng-if="vm.isAuthorize && !vm.loading">
+                {{ vm.authText }}
+            </div>
         </div>
     </body>
 </html>
