@@ -69,6 +69,7 @@ public class IdentityController : Controller
 
         var claims = new List<Claim>()
         {
+            new Claim(ClaimTypes.NameIdentifier, person.Id.ToString()),
             new Claim(ClaimsIdentity.DefaultNameClaimType, person.UserName),
             new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
         };
