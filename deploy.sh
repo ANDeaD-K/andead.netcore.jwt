@@ -8,7 +8,7 @@ TAG=$1
 # Create publish artifact
 #dotnet publish -c Release
 
-docker login --help
+#docker login --help
 
 cp ./Dockerfile ./bin/Release/netcoreapp2.1/Dockerfile
 
@@ -18,6 +18,6 @@ docker tag andead/dotnet.jwt:$TAG andead/dotnet.jwt:latest
 
 # Login to Docker Hub and upload images
 #docker login --username=$2 --password=$3
-echo $3 | docker login -u $2 --password-stdin
+docker login --username $2 --password $3
 docker push repository/project:$TAG
 docker push repository/project:latest
