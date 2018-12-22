@@ -15,6 +15,6 @@ docker build -t andead/dotnet.jwt:$TAG bin/Release/netcoreapp2.1/.
 docker tag andead/dotnet.jwt:$TAG andead/dotnet.jwt:latest
 
 # Login to Docker Hub and upload images
-docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
+docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 docker push repository/project:$TAG
 docker push repository/project:latest
