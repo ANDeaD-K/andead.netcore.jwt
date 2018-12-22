@@ -8,6 +8,8 @@ TAG=$1
 # Create publish artifact
 #dotnet publish -c Release
 
+docker login --help
+
 cp ./Dockerfile ./bin/Release/netcoreapp2.1/Dockerfile
 
 # Build the Docker images
