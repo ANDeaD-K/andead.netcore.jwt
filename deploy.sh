@@ -8,6 +8,8 @@ DOCKER_PASSWORD=$3
 # Create publish artifact
 #dotnet publish -c Release
 
+copy ./Dockerfile ./bin/Release/netcoreapp2.1/Dockerfile
+
 # Build the Docker images
 docker build -t andead/dotnet.jwt:$TAG bin/Release/netcoreapp2.1/.
 docker tag andead/dotnet.jwt:$TAG andead/dotnet.jwt:latest
