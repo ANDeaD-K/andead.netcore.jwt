@@ -6,7 +6,7 @@ DOCKER_USERNAME=$2
 DOCKER_PASSWORD=$3
 
 # Create publish artifact
-dotnet publish -c Release
+#dotnet publish -c Release
 
 # Build the Docker images
 docker build -t andead/dotnet.jwt:$TAG bin/Release/netcoreapp2.1/.
